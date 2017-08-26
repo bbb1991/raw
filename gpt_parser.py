@@ -91,7 +91,7 @@ def an_gpt_header(gpt_header, crc32_header_value):
     size_of_part_entry = gpt_header[12]
     crc32_of_partition_array = gpt_header[13]
     print('[+] Primary GPT header')
-    print(' [-] Signature: %s' % signature)
+    print(' [-] Signature: %s' % signature.decode())
     print(' [-] Revision: %d' % revision)
     print(' [-] Header Size: %d' % headersize)
     if crc32_header_value == crc32_header:
@@ -161,7 +161,7 @@ def check_partition_guid_type(guid):
         '516E7CB5-6ECF-11D6-8FF8-00022D09712B': ('Swap partition', 'FreeBSD'),
         '516E7CB6-6ECF-11D6-8FF8-00022D09712B': ('Unix File System(UFS) partition', 'FreeBSD'),
         '516E7CB8-6ECF-11D6-8FF8-00022D09712B': ('Vinum volume manager partition', 'FreeBSD'),
-        '516E7CB8-6ECF-11D6-8FF8-00022D09712B': ('ZFS partition', 'FreeBSD'),
+        '516E7CBA-6ECF-11D6-8FF8-00022D09712B': ('ZFS partition', 'FreeBSD'),
         '48465300-0000-11AA-AA11-00306543ECAC': ('Hierarchical File System Plus (HFS+) partition', 'Mac OS X'),
         '55465300-0000-11AA-AA11-00306543ECAC': ('Apple UFS', 'Mac OS X'),
         '6A898CC3-1DD2-11B2-99A6-080020736631': ('ZFS / /usr partition', 'Mac OS X / Solaris'),
@@ -175,7 +175,6 @@ def check_partition_guid_type(guid):
         '6A85CF4D-1DD2-11B2-99A6-080020736631': ('Root partition', 'Solaris'),
         '6A87C46F-1DD2-11B2-99A6-080020736631': ('Swap partition', 'Solaris'),
         '6A8B642B-1DD2-11B2-99A6-080020736631': ('Backup partition', 'Solaris'),
-        # '6A898CC3-1DD2-11B2-99A6-080020736631': ('/usr partition', 'Solaris'),
         '6A8EF2E9-1DD2-11B2-99A6-080020736631': ('/var partition', 'Solaris'),
         '6A90BA39-1DD2-11B2-99A6-080020736631': ('/home partition', 'Solaris'),
         '6A9283A5-1DD2-11B2-99A6-080020736631': ('Alternate sector', 'Solaris'),
@@ -292,6 +291,7 @@ def an_part_table(partition_table, gpt_header):
         print('  [-] Last LBA: %d' % part_entry[3])
         print('      => Disk Offset: 0x%.8X (%s)' % (part_entry[3] * LBA_SIZE, sizeof_fmt(part_entry[3] * LBA_SIZE)))
         print('  [-] Attribute flags: %d, %s' % (part_entry[4], part_attribute(part_entry[4])))
+        print('  [-] Partition size: (%s)' % (sizeof_fmt(part_entry[3] * LBA_SIZE - part_entry[2] * LBA_SIZE)))
         print('  [-] Partition Name: %s' % str(part_entry[5]))
         count += 1
 
@@ -364,7 +364,7 @@ def sizeof_fmt(num, suffix='B'):
         if abs(num) < 1024.0:
             return "%3.1f%s%s" % (num, unit, suffix)
         num /= 1024.0
-    return "%.1f%s%s" % (num, 'Yi', suffix)
+    return "%.1f %s %s" % (num, 'Yi', suffix)
 
 
 if __name__ == "__main__":
